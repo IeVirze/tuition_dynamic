@@ -105,15 +105,19 @@ urls = {2024: 'https://web.archive.org/web/20240427010003/https://www.rtu.lv/lv/
 
 
 def main(urls):
+    '''The function receives as a parameter all of the RTU urls from web.archive.org and iterates through them while 
+    calling the functions for the full ETL pipline actions including loading to the database and .csv file loadings'''
     db_name = 'tuition_fees.db'
     for year, url in urls.items():
         csv = f'./tuition_fees_{year}.csv'
         table_name = f'tuition_fees_{year}'
+        #Calls function to start ETL
         df = extract(url)
-        
+        #Calls function for transforming the data
         df = transform(df)
-        print(df)
+        #Calls function for loading the data to .csv files
         load_to_csv(df,csv)
+        #Establishes sql connection and calls function to add data tables in .db file
         sql_connection = sqlite3.connect(db_name)
         load_to_db(df,sql_connection,table_name)
 
